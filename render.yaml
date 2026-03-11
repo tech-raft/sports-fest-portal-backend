@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: sports-fest-portal
+    runtime: node
+    region: oregon
+    plan: free
+    buildCommand: cd frontend && npm install --legacy-peer-deps && npm run build && cd ../backend && npm install
+    startCommand: cd backend && node server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: admin123
+      - key: MANAGEMENT_USERNAME
+        value: management
+      - key: MANAGEMENT_PASSWORD
+        value: manage123

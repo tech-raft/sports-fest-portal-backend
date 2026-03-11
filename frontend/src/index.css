@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0A0A0F;
+  color: #ffffff;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #12121A;
+}
+::-webkit-scrollbar-thumb {
+  background: #2A2A3A;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #39FF14;
+}
+
+.glass {
+  background: rgba(26, 26, 37, 0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.neon-border {
+  border: 1px solid rgba(57, 255, 20, 0.3);
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+}
+
+.neon-text {
+  text-shadow: 0 0 10px currentColor, 0 0 20px currentColor;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #39FF14, #00F0FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-hover:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(57, 255, 20, 0.15);
+}
+
+.btn-primary {
+  @apply px-6 py-3 bg-gradient-to-r from-neon-green to-neon-blue text-dark-900 font-bold rounded-xl
+         hover:shadow-lg hover:shadow-neon-green/25 transition-all duration-300 active:scale-95;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 border border-neon-green/30 text-neon-green rounded-xl
+         hover:bg-neon-green/10 transition-all duration-300 active:scale-95;
+}
+
+.input-field {
+  @apply w-full px-4 py-3 bg-dark-700 border border-dark-500 rounded-xl text-white
+         placeholder-gray-500 focus:outline-none focus:border-neon-green/50
+         focus:ring-1 focus:ring-neon-green/30 transition-all duration-300;
+}
