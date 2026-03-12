@@ -97,12 +97,11 @@ export default function GameDetails() {
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
                 {/* Quick Stats */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
                     {[
                         { icon: <Users size={20} />, label: 'Team Size', value: `${game.team_size} Players`, color: 'text-neon-blue' },
                         { icon: <DollarSign size={20} />, label: 'Entry Fee', value: `₹${game.registration_fee}`, color: 'text-neon-green' },
                         { icon: <Shield size={20} />, label: 'Max Teams', value: game.team_limit, color: 'text-neon-purple' },
-                        { icon: <Clock size={20} />, label: 'Format', value: rules.format, color: 'text-neon-yellow' },
                     ].map((stat, i) => (
                         <div key={i} className="glass rounded-xl p-4 text-center animate-slide-up" style={{ animationDelay: `${i * 100}ms` }}>
                             <div className={`${stat.color} mb-2 flex justify-center`}>{stat.icon}</div>

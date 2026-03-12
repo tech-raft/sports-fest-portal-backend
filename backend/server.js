@@ -10,6 +10,28 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const multer = require('multer');
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uploadDir);
+    },
+    filename: function (req, file, cb) {
+        cb(null, uuidv4() + path.extname(file.originalname));
+    }
+});
+const upload = multer({ storage: storage });
+
+// Serve static uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // Initialize Firebase
 initializeFirebase();
 
@@ -51,6 +73,31 @@ function generateTeamCode(gameId, teamNumber) {
 // ============================================================
 // ROUTES: AUTH
 // ============================================================
+app.post('/api/auth/login', (req, res) => {
+    const { username, password } = req.body;
+    if (username === (process.env.ADMIN_USERNAME || 'admin') && password === (process.env.ADMIN_PASSWORD || 'admin123')) {
+        return res.json({ user: { username, role: 'admin' } });
+    }
+    if (username === (process.env.MANAGEMENT_USERNAME || 'management') && password === (process.env.MANAGEMENT_PASSWORD || 'manage123')) {
+        return res.json({ user: { username, role: 'management' } });
+    }
+    return res.json({ error: 'Invalid credentials' });
+});
+
+// ============================================================
+// ROUTES: UPLOAD
+// ============================================================
+app.post('/api/upload', upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        const fileUrl = `/uploads/${req.file.filename}`;
+        return res.json({ success: true, url: fileUrl });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.post('/api/auth/login', (req, res) => {
     const { username, password } = req.body;
     if (username === (process.env.ADMIN_USERNAME || 'admin') && password === (process.env.ADMIN_PASSWORD || 'admin123')) {

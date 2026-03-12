@@ -15,7 +15,10 @@ export default function ManageGames() {
         registration_fee: 100,
         team_limit: 10,
         registration_status: 'open',
+        description: '',
+        rules: '',
     })
+    const [imageFile, setImageFile] = useState(null)
     const [addError, setAddError] = useState('')
 
     useEffect(() => {
@@ -56,6 +59,8 @@ export default function ManageGames() {
                 registration_fee: Number(game.registration_fee),
                 team_limit: Number(game.team_limit),
                 team_size: Number(game.team_size),
+                description: game.description || '',
+                rules: game.rules || '',
             })
         } catch { }
         setSaving(null)
@@ -69,6 +74,20 @@ export default function ManageGames() {
         }
         setSaving('new')
         try {
+            let game_image = '';
+            if (imageFile) {
+                const formData = new FormData();
+                formData.append('image', imageFile);
+                const uploadRes = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.success) {
+                    game_image = uploadData.url;
+                }
+            }
+
             const res = await fetch('/api/games', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,13 +97,17 @@ export default function ManageGames() {
                     registration_fee: Number(newGame.registration_fee),
                     team_limit: Number(newGame.team_limit),
                     registration_status: newGame.registration_status,
+                    game_image: game_image,
+                    description: newGame.description,
+                    rules: newGame.rules,
                 }),
             })
             const data = await res.json()
             if (data.success) {
                 await fetchGames()
                 setShowAddForm(false)
-                setNewGame({ game_name: '', team_size: 6, registration_fee: 100, team_limit: 10, registration_status: 'open' })
+                setNewGame({ game_name: '', team_size: 6, registration_fee: 100, team_limit: 10, registration_status: 'open', description: '', rules: '' })
+                setImageFile(null)
             } else {
                 setAddError(data.error || 'Failed to add game')
             }
@@ -154,6 +177,15 @@ export default function ManageGames() {
                                     className="input-field text-sm"
                                 />
                             </div>
+                            <div className="sm:col-span-2">
+                                <label className="text-xs text-gray-500 mb-1 block">Game Image</label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={e => setImageFile(e.target.files[0])}
+                                    className="input-field text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-neon-green/10 file:text-neon-green hover:file:bg-neon-green/20"
+                                />
+                            </div>
                             <div>
                                 <label className="text-xs text-gray-500 mb-1 block">Team Size</label>
                                 <input
@@ -179,6 +211,26 @@ export default function ManageGames() {
                                     value={newGame.team_limit}
                                     onChange={e => setNewGame({ ...newGame, team_limit: e.target.value })}
                                     className="input-field text-sm"
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label className="text-xs text-gray-500 mb-1 block">Description</label>
+                                <textarea
+                                    value={newGame.description}
+                                    onChange={e => setNewGame({ ...newGame, description: e.target.value })}
+                                    placeholder="Enter game description..."
+                                    className="input-field text-sm"
+                                    rows="3"
+                                />
+                            </div>
+                            <div className="sm:col-span-2">
+                                <label className="text-xs text-gray-500 mb-1 block">Rules</label>
+                                <textarea
+                                    value={newGame.rules}
+                                    onChange={e => setNewGame({ ...newGame, rules: e.target.value })}
+                                    placeholder="Enter game rules..."
+                                    className="input-field text-sm"
+                                    rows="4"
                                 />
                             </div>
                         </div>
@@ -247,6 +299,27 @@ export default function ManageGames() {
                                         value={game.team_limit}
                                         onChange={e => updateField(game.id, 'team_limit', e.target.value)}
                                         className="input-field text-sm"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4 mb-4">
+                                <div>
+                                    <label className="text-xs text-gray-500 mb-1 block">Description</label>
+                                    <textarea
+                                        value={game.description || ''}
+                                        onChange={e => updateField(game.id, 'description', e.target.value)}
+                                        className="input-field text-sm"
+                                        rows="2"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="text-xs text-gray-500 mb-1 block">Rules</label>
+                                    <textarea
+                                        value={game.rules || ''}
+                                        onChange={e => updateField(game.id, 'rules', e.target.value)}
+                                        className="input-field text-sm"
+                                        rows="3"
                                     />
                                 </div>
                             </div>
